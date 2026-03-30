@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Familien-Planer V2</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        :root {
+            --bg: #0a0a0c; 
+            --card-bg: #1c1c1e; 
+            --card-hover: #252528;
+            --primary: #8bd3a5; /* Dein neues Mintgrün */
+            --primary-dark: #2a4d3a;
+            --text-main: #ffffff;
+            --text-muted: #8e8e93;
+            --border: #2c2c2e;
+            --danger: #ff453a;
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: var(--bg); 
+            color: var(--text-main); 
+            margin: 0; 
+            padding: 0;
+            padding-bottom: 160px; /* Platz für Nav und Add-Area */
+        }
+        
+        /* HEADER MIT BILD */
+        .header-container {
+            position: relative;
+            /* Hier ist das Platzhalter-Basilikum-Bild */
+            background-image: linear-gradient(to bottom, rgba(10,10,12,0.1) 0%, rgba(10,10,12,1) 100%), url('https://images.unsplash.com/photo-1606914501449-5a96b6ce24ca?q=80&w=800&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            padding: 60px 20px 20px 20px;
+        }
+
+        .btn-sort-top {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: none;
+            color: var(--primary);
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+        }
+
+        .header-subtitle {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .header-controls {
+            display: flex; gap: 10px; align-items: center;
+        }
+
+        .list-select-wrapper { 
+            flex-grow: 1; 
+            position: relative; 
+            background: rgba(28, 28, 30, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        select { 
+            width: 100%; padding: 12px 15px; 
+            background: transparent; border: none; 
+            color: var(--text-main); font-size: 1.2rem; font-weight: 600; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            outline: none; appearance: none;
+        }
+
+        .header-btn {
+            background: rgba(28, 28, 30, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            width: 48px; height: 48px; 
+            border-radius: 12px; 
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+        }
+        .header-btn.add { color: var(--primary); }
+        .header-btn.del { color: #ff6b6b; }
+
+        /* LISTE & ARTIKEL */
+        #shoppingList { 
+            display: flex; flex-direction: column; gap: 12px; 
+            padding: 0 20px;
+            margin-top: 10px;
+        }
+        
+        .item-row { 
+            background: var(--card-bg); 
+            border: 1px solid var(--border); 
+            border-radius: 16px; 
+            display: flex; align-items: center; 
+            padding: 12px 16px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-star { 
+            background: none; border: none; cursor: pointer; 
+            color: var(--text-muted); margin-right: 12px; padding: 0; 
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-star.is-fav { color: var(--primary); fill: var(--primary); }
+        
+        .qty-display { 
+            font-weight: 700; color: var(--primary); 
+            margin-right: 8px; font-size: 0.95rem; 
+        }
+        .name-text { 
+            flex-grow: 1; font-size: 1.05rem; font-weight: 500;
+        }
+        
+        .qty-input { 
+            width: 45px; height: 32px; 
+            border: none; border-radius: 8px; 
+            text-align: center; 
+            background: rgba(255,255,255,0.05); color: var(--text-main); 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 600; font-size: 0.9rem;
+            margin-right: 10px;
+        }
+        
+        .btn-delete { 
+            color: var(--text-muted); border: none; background: none; 
+            cursor: pointer; padding: 5px; display: flex; align-items: center;
+        }
+
+        /* ADD AREA (Neues Design) */
+        .add-area {
+            position: fixed; bottom: 85px; left: 20px; right: 20px;
+            background: var(--card-bg); 
+            padding: 8px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            display: flex; gap: 10px; align-items: center; z-index: 2000;
+        }
+
+        #newItemName { 
+            flex-grow: 1; padding: 12px; border: none; 
+            background: transparent; color: var(--text-main); 
+            font-size: 1rem; font-family: 'Plus Jakarta Sans', sans-serif;
+            outline: none;
+        }
+        #newItemName::placeholder { color: var(--text-muted); }
+        
+        .btn-add-main {
+            background: var(--primary); color: #000;
+            border: none; width: 44px; height: 44px;
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+        }
+
+        /* BOTTOM NAV (Neues Design) */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            height: 85px; padding-bottom: env(safe-area-inset-bottom);
+            background: rgba(10, 10, 12, 0.95); backdrop-filter: blur(15px);
+            border-top: 1px solid var(--border);
+            display: flex; justify-content: space-around; align-items: center; z-index: 2500;
+        }
+        .nav-item {
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-muted); font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.5px; cursor: pointer; gap: 4px; height: 100%;
+        }
+        /* Aktiver Zustand als Bubble */
+        .nav-item.active {
+            color: var(--primary);
+        }
+        .nav-item.active .nav-icon-wrapper {
+            background: var(--primary-dark);
+            padding: 8px 24px;
+            border-radius: 20px;
+        }
+        .nav-item.active i { color: var(--primary); }
+
+        /* UNDO TOAST */
+        .undo-toast {
+            position: fixed; bottom: 160px; left: 50%; transform: translateX(-50%) translateY(50px);
+            background: #2c2c2e; padding: 12px 20px; border-radius: 30px;
+            display: flex; align-items: center; gap: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 3000;
+            font-size: 0.9rem;
+        }
+        .undo-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+        .undo-text { color: var(--text-main); }
+        .undo-btn { color: var(--primary); font-weight: bold; background: none; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    </style>
+</head>
+<body>
+
+<div class="header-container">
+    <button class="btn-sort-top" onclick="alert('Sortier-Modus kommt in Schritt 2!')">
+        <i data-lucide="arrow-down-up" stroke-width="2.5" size="20"></i>
+    </button>
+    
+    <div class="header-subtitle">Aktuelle Liste</div>
+    <div class="header-controls">
+        <div class="list-select-wrapper">
+            <select id="listSelect" onchange="switchList()"></select>
+        </div>
+        <button class="header-btn add" onclick="createNewList()"><i data-lucide="plus" size="24"></i></button>
+        <button class="header-btn del" onclick="deleteCurrentList()"><i data-lucide="trash-2" size="20"></i></button>
+    </div>
+</div>
+
+<div id="shoppingList"></div>
+
+<div class="undo-toast" id="undoToast">
+    <span class="undo-text">Element gelöscht</span>
+    <button class="undo-btn" onclick="performUndo()">RÜCKGÄNGIG</button>
+</div>
+
+<div class="add-area">
+    <input type="text" id="newItemName" placeholder="Artikel hinzufügen..." enterkeyhint="go" onkeypress="if(event.key==='Enter') addItem()">
+    <button class="btn-add-main" onclick="addItem()">
+        <i data-lucide="plus" color="#000" stroke-width="3"></i>
+    </button>
+</div>
+
+<nav class="bottom-nav">
+    <div class="nav-item">
+        <div class="nav-icon-wrapper"><i data-lucide="utensils-crossed" size="22"></i></div>
+        <span>Rezepte</span>
+    </div>
+    <div class="nav-item active">
+        <div class="nav-icon-wrapper"><i data-lucide="shopping-cart" size="22"></i></div>
+        <span>Einkauf</span>
+    </div>
+    <div class="nav-item">
+        <div class="nav-icon-wrapper"><i data-lucide="heart" size="22"></i></div>
+        <span>Favoriten</span>
+    </div>
+</nav>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, updateDoc, writeBatch, query, where, orderBy, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyD5m0MvysOWVb53pRpqCXaMnofUTBjNgDo",
+        authDomain: "einkaufsliste-2-d392b.firebaseapp.com",
+        projectId: "einkaufsliste-2-d392b",
+        storageBucket: "einkaufsliste-2-d392b.firebasestorage.app",
+        messagingSenderId: "883591306736",
+        appId: "1:883591306736:web:5c9754c6ab03157b1bd135"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let currentList = localStorage.getItem('lastActiveList') || "Wocheneinkauf";
+    let localItems = []; 
+    let favorites = []; 
+    let listUnsubscribe = null;
+    let itemsUnsubscribe = null;
+
+    // Undo-System Variablen
+    let undoTimeout = null;
+    let pendingDeleteData = null; // Speichert die Daten des gelöschchten Artikels
+
+    // Icons initialisieren
+    lucide.createIcons();
+
+    // --- FIREBASE LOGIK (Vom alten "Gehirn" kopiert und angepasst) ---
+
+    function subscribeToAllLists() {
+        const q = query(collection(db, "shopping_lists"), orderBy("createdAt", "asc"));
+        listUnsubscribe = onSnapshot(q, (snapshot) => {
+            const select = document.getElementById('listSelect');
+            select.innerHTML = '';
+            let foundCurrent = false;
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const option = document.createElement('option');
+                option.value = data.name;
+                option.innerText = data.name;
+                select.appendChild(option);
+                if (data.name === currentList) foundCurrent = true;
+            });
+            if (!foundCurrent && snapshot.docs.length > 0) currentList = snapshot.docs[0].data().name;
+            else if (snapshot.docs.length === 0) select.innerHTML = '<option value="">Keine Liste</option>';
+            select.value = currentList;
+            subscribeToItems();
+        });
+    }
+
+    function subscribeToItems() {
+        if (itemsUnsubscribe) itemsUnsubscribe();
+        if (!currentList) return;
+        
+        const listRef = collection(db, "shopping_items");
+        const q = query(listRef, where("listName", "==", currentList), orderBy("sortOrder", "asc"));
+        itemsUnsubscribe = onSnapshot(q, (snapshot) => {
+            localItems = [];
+            const listContainer = document.getElementById('shoppingList');
+            listContainer.innerHTML = '';
+            
+            snapshot.forEach((doc) => {
+                let data = doc.data();
+                localItems.push({ id: doc.id, ...data });
+            });
+            renderList(localItems);
+        });
+    }
+
+    // --- NEUES RENDER SYSTEM ---
+    function renderList(items) {
+        const listContainer = document.getElementById('shoppingList');
+        if(items.length === 0) {
+            listContainer.innerHTML = '<div style="text-align:center; padding: 40px; color: var(--text-muted);">Liste ist leer</div>';
+            return;
+        }
+        
+        items.forEach((item) => {
+            const row = document.createElement('div');
+            row.className = 'item-row';
+            
+            // Icon für Favorit (Ausgefüllt wenn ja, sonst leer)
+            const starIcon = item.fav ? '<i data-lucide="star" fill="currentColor"></i>' : '<i data-lucide="star"></i>';
+            const qtyHtml = item.qty ? `<span class="qty-display">${item.qty}</span>` : `<span class="qty-display"></span>`;
+
+            row.innerHTML = `
+                <button class="btn-star ${item.fav ? 'is-fav' : ''}" onclick="toggleFavCloud('${item.id}', ${item.fav}, '${item.name}')">
+                    ${starIcon}
+                </button>
+                ${qtyHtml}
+                <div class="name-text">${item.name}</div>
+                
+                <input type="text" class="qty-input" placeholder="-" value="${item.qty || ''}" 
+                       onchange="updateItemQty('${item.id}', this.value)">
+                
+                <button class="btn-delete" onclick="requestDelete('${item.id}')">
+                    <i data-lucide="x" size="20"></i>
+                </button>
+            `;
+            listContainer.appendChild(row);
+        });
+        lucide.createIcons(); // Icons nach dem Rendern neu zeichnen
+    }
+
+    // --- NEUE UNDO LOGIK ---
+    window.requestDelete = async function(id) {
+        // 1. Artikel in den Daten finden
+        const itemToDelete = localItems.find(i => i.id === id);
+        if(!itemToDelete) return;
+
+        // 2. Sofort aus der Datenbank löschen (damit es bei deiner Frau sofort verschwindet)
+        await deleteDoc(doc(db, "shopping_items", id));
+        
+        // 3. Daten für eventuelles Undo merken
+        pendingDeleteData = {
+            name: itemToDelete.name,
+            qty: itemToDelete.qty,
+            fav: itemToDelete.fav,
+            listName: itemToDelete.listName,
+            sortOrder: itemToDelete.sortOrder // Behält die alte Position!
+        };
+
+        // 4. Toast anzeigen
+        const toast = document.getElementById('undoToast');
+        toast.classList.add('show');
+
+        // 5. Timer setzen (nach 5 Sek verschwindet das Toast, Undo nicht mehr möglich)
+        clearTimeout(undoTimeout);
+        undoTimeout = setTimeout(() => {
+            toast.classList.remove('show');
+            pendingDeleteData = null;
+        }, 5000);
+    }
+
+    window.performUndo = async function() {
+        if(!pendingDeleteData) return;
+        
+        // Toast sofort ausblenden
+        document.getElementById('undoToast').classList.remove('show');
+        clearTimeout(undoTimeout);
+
+        // Artikel mit den exakten alten Daten (inkl. Position) neu in die DB schreiben
+        pendingDeleteData.createdAt = serverTimestamp(); 
+        await addDoc(collection(db, "shopping_items"), pendingDeleteData);
+        
+        pendingDeleteData = null;
+    }
+
+    // --- BEKANNTE FUNKTIONEN ---
+    window.addItem = async function() {
+        const input = document.getElementById('newItemName');
+        const name = input.value.trim();
+        if (!name) return;
+        
+        const exists = localItems.some(item => item.name.toLowerCase() === name.toLowerCase());
+        if (exists) { alert(`"${name}" steht schon auf der Liste!`); return; }
+        
+        await addDoc(collection(db, "shopping_items"), {
+            name: name, qty: "", fav: false, listName: currentList,
+            createdAt: serverTimestamp(), sortOrder: Date.now()
+        });
+        input.value = '';
+    }
+
+    window.updateItemQty = async function(id, newQty) { 
+        await updateDoc(doc(db, "shopping_items", id), { qty: newQty }); 
+    }
+
+    window.toggleFavCloud = async function(id, currentStatus, name) {
+        await updateDoc(doc(db, "shopping_items", id), { fav: !currentStatus });
+        // (Cloud Sync für Favoriten-Panel kommt in Schritt 2)
+    }
+
+    window.switchList = function() {
+        currentList = document.getElementById('listSelect').value;
+        localStorage.setItem('lastActiveList', currentList);
+        subscribeToItems();
+    }
+
+    window.createNewList = async function() {
+        const name = prompt("Name der neuen Liste:");
+        if (name && name.trim()) {
+            const cleanName = name.trim();
+            await addDoc(collection(db, "shopping_lists"), { name: cleanName, createdAt: serverTimestamp() });
+            currentList = cleanName;
+            localStorage.setItem('lastActiveList', currentList);
+        }
+    }
+
+    window.deleteCurrentList = async function() {
+        if (!confirm(`Liste "${currentList}" wirklich löschen?`)) return;
+        const listQuery = query(collection(db, "shopping_lists"), where("name", "==", currentList));
+        const listSnap = await getDocs(listQuery);
+        listSnap.forEach(async (d) => await deleteDoc(doc(db, "shopping_lists", d.id)));
+        const itemsQuery = query(collection(db, "shopping_items"), where("listName", "==", currentList));
+        const itemsSnap = await getDocs(itemsQuery);
+        const batch = writeBatch(db);
+        itemsSnap.forEach((d) => batch.delete(d.ref));
+        await batch.commit();
+    }
+
+    // App Start
+    subscribeToAllLists();
+
+</script>
+</body>
+</html>
