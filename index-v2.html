@@ -61,7 +61,8 @@
 
         .list-select-wrapper { 
             flex-grow: 1; position: relative; 
-            background: rgba(40, 40, 42, 0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            background: rgba(53, 53, 52, 0.4); /* Dein Figma-Wert: #353534 bei 40% */
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center;
         }
 
@@ -74,7 +75,8 @@
         .select-arrow { position: absolute; right: 12px; color: var(--text-muted); pointer-events: none; }
 
         .header-btn {
-            background: rgba(40, 40, 42, 0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            background: rgba(53, 53, 52, 0.4); /* Dein Figma-Wert: #353534 bei 40% */
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255,255,255,0.1); color: var(--text-main); width: 48px; height: 48px; 
             border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer;
         }
@@ -180,7 +182,7 @@
             letter-spacing: 0.5px; cursor: pointer; gap: 4px; height: 70%; margin: 0 10px; border-radius: 16px; transition: all 0.3s ease;
         }
         .nav-item.active { color: var(--primary); background: var(--primary-dark); box-shadow: 0 0 15px var(--primary-dark); }
-        .nav-item.active i { color: var(--primary); }
+        .nav-item.active svg { color: var(--primary); }
 
         /* --- MODALS & OVERLAYS --- */
         .overlay {
@@ -189,6 +191,21 @@
             opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         }
         .overlay.show { opacity: 1; pointer-events: auto; }
+
+        .modal-centered {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -40%);
+            background: #252527; width: 90%; max-width: 400px; border-radius: 24px; padding: 25px;
+            z-index: 3001; opacity: 0; pointer-events: none; transition: all 0.3s ease;
+        }
+        .modal-centered.show { opacity: 1; transform: translate(-50%, -50%); pointer-events: auto; }
+        .modal-close-top { position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.05); border: none; color: var(--text-muted); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .modal-icon-wrapper { width: 50px; height: 50px; background: var(--primary-dark); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; color: var(--primary); }
+        .modal-title { text-align: center; font-size: 1.3rem; font-weight: 700; margin: 0 0 8px 0; }
+        .modal-subtitle { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin: 0 0 25px 0; }
+        .input-label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .modal-input { width: 100%; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 15px; color: var(--text-main); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1rem; margin-bottom: 20px; outline: none;}
+        .btn-modal-submit { width: 100%; background: #356b50; color: #fff; border: none; padding: 16px; border-radius: 12px; font-weight: 600; font-size: 1.05rem; font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;}
+
 
         .modal-bottom {
             position: fixed; bottom: 0; left: 0; right: 0; background: #131314;
@@ -218,6 +235,25 @@
 
 <div class="overlay" id="mainOverlay" onclick="closeAllModals()"></div>
 
+<div class="modal-centered" id="newListModal">
+    <button class="modal-close-top" onclick="closeAllModals()">
+        <i data-lucide="x" size="18"></i>
+    </button>
+    <div class="modal-icon-wrapper">
+        <svg width="28" height="25" viewBox="0 0 28 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 25C10.7708 25 9.14583 24.6719 7.625 24.0156C6.10417 23.3594 4.78125 22.4688 3.65625 21.3438C2.53125 20.2188 1.64062 18.8958 0.984375 17.375C0.328125 15.8542 0 14.2292 0 12.5C0 10.7708 0.328125 9.14583 0.984375 7.625C1.64062 6.10417 2.53125 4.78125 3.65625 3.65625C4.78125 2.53125 6.10417 1.64062 7.625 0.984375C9.14583 0.328125 10.7708 0 12.5 0C13.8542 0 15.1354 0.197917 16.3438 0.59375C17.5521 0.989583 18.6667 1.54167 19.6875 2.25L17.875 4.09375C17.0833 3.59375 16.2396 3.20312 15.3438 2.92188C14.4479 2.64062 13.5 2.5 12.5 2.5C9.72917 2.5 7.36979 3.47396 5.42188 5.42188C3.47396 7.36979 2.5 9.72917 2.5 12.5C2.5 15.2708 3.47396 17.6302 5.42188 19.5781C7.36979 21.526 9.72917 22.5 12.5 22.5C13.1667 22.5 13.8125 22.4375 14.4375 22.3125C15.0625 22.1875 15.6667 22.0104 16.25 21.7812L18.125 23.6875C17.2708 24.1042 16.375 24.4271 15.4375 24.6562C14.5 24.8854 13.5208 25 12.5 25ZM21.25 22.5V18.75H17.5V16.25H21.25V12.5H23.75V16.25H27.5V18.75H23.75V22.5H21.25ZM10.75 18.25L5.4375 12.9375L7.1875 11.1875L10.75 14.75L23.25 2.21875L25 3.96875L10.75 18.25Z" fill="currentColor"/></svg>
+    </div>
+    <h2 class="modal-title">Neue Einkaufsliste</h2>
+    <p class="modal-subtitle">Organisieren Sie Ihre kulinarischen Einkäufe</p>
+    
+    <label class="input-label">Name der Liste</label>
+    <input type="text" id="newListInput" class="modal-input" placeholder="z.B. Sonntagsbrunch">
+    
+    <button class="btn-modal-submit" onclick="submitNewList()">
+        Liste erstellen 
+        <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 6.66667L13.9583 4.375L11.6667 3.33333L13.9583 2.29167L15 0L16.0417 2.29167L18.3333 3.33333L16.0417 4.375L15 6.66667ZM15 18.3333L13.9583 16.0417L11.6667 15L13.9583 13.9583L15 11.6667L16.0417 13.9583L18.3333 15L16.0417 16.0417L15 18.3333ZM6.66667 15.8333L4.58333 11.25L0 9.16667L4.58333 7.08333L6.66667 2.5L8.75 7.08333L13.3333 9.16667L8.75 11.25L6.66667 15.8333ZM6.66667 11.7917L7.5 10L9.29167 9.16667L7.5 8.33333L6.66667 6.54167L5.83333 8.33333L4.04167 9.16667L5.83333 10L6.66667 11.7917Z" fill="currentColor"/></svg>
+    </button>
+</div>
+
 <div class="modal-bottom" id="favModal">
     <div class="drag-handle"></div>
     <div style="display:flex; justify-content:space-between; align-items:flex-start;">
@@ -225,7 +261,9 @@
             <h2 class="modal-title" style="text-align:left; margin-bottom:4px; font-size: 1.3rem; margin-top: 0;">Favoriten-<br>Schnellauswahl</h2>
             <p class="modal-subtitle" style="text-align:left; margin-bottom:0; color: var(--text-muted); font-size: 0.9rem;">Meistgekaufte Produkte schnell hinzufügen</p>
         </div>
-        <button class="modal-close-top" style="position:relative; top:0; right:0; background: rgba(255,255,255,0.05); border: none; color: var(--text-muted); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;" onclick="closeAllModals()"><i data-lucide="x" size="18"></i></button>
+        <button class="modal-close-top" style="position:relative; top:0; right:0; background: rgba(255,255,255,0.05); border: none; color: var(--text-muted); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;" onclick="closeAllModals()">
+            <i data-lucide="x" size="18"></i>
+        </button>
     </div>
     <div class="fav-list" id="favListContainer"></div>
     <button class="btn-fav-submit" id="btnSubmitFavs" onclick="submitFavs()">Ausgewählte hinzufügen (0)</button>
@@ -237,7 +275,9 @@
         <div>
             <h2 class="modal-title" style="text-align:left; font-size: 1.3rem; margin-top: 0;">Welche Zutaten<br>brauchst du?</h2>
         </div>
-        <button class="modal-close-top" style="position:relative; top:0; right:0; background: rgba(255,255,255,0.05); border: none; color: var(--text-muted); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;" onclick="closeAllModals()"><i data-lucide="x" size="18"></i></button>
+        <button class="modal-close-top" style="position:relative; top:0; right:0; background: rgba(255,255,255,0.05); border: none; color: var(--text-muted); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;" onclick="closeAllModals()">
+            <i data-lucide="x" size="18"></i>
+        </button>
     </div>
     <div class="fav-list" id="transferListContainer"></div>
     <button class="btn-fav-submit ready" id="btnSubmitTransfer" onclick="submitTransfer()">Auf Einkaufsliste übertragen</button>
@@ -251,14 +291,20 @@
                 <select id="listSelect" onchange="switchList()"></select>
                 <i data-lucide="chevron-down" size="20" class="select-arrow"></i>
             </div>
-            <button class="header-btn add" onclick="alert('Neue Liste Funktion!')"><i data-lucide="plus" size="24"></i></button>
-            <button class="header-btn del" onclick="deleteCurrentList()"><i data-lucide="trash-2" size="20"></i></button>
+            <button class="header-btn add" onclick="openNewListModal()">
+                <i data-lucide="plus" size="24"></i>
+            </button>
+            <button class="header-btn del" onclick="deleteCurrentList()">
+                <svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 18C2.45 18 1.97917 17.8042 1.5875 17.4125C1.19583 17.0208 1 16.55 1 16V3H0V1H5V0H11V1H16V3H15V16C15 16.55 14.8042 17.0208 14.4125 17.4125C14.0208 17.8042 13.55 18 13 18H3ZM13 3H3V16H13V3ZM5 14H7V5H5V14ZM9 14H11V5H9V14ZM3 3V16V3Z" fill="currentColor"/></svg>
+            </button>
         </div>
     </div>
     <div class="list-container" id="shoppingList"></div>
     <div class="add-area">
         <input type="text" id="newItemName" placeholder="Artikel hinzufügen..." enterkeyhint="go" onkeypress="if(event.key==='Enter') addItem()">
-        <button class="btn-add-main" onclick="addItem()"><i data-lucide="plus" color="#000" stroke-width="3"></i></button>
+        <button class="btn-add-main" onclick="addItem()">
+            <i data-lucide="plus" color="#000" stroke-width="3"></i>
+        </button>
     </div>
 </div>
 
@@ -272,7 +318,9 @@
 
     <div class="list-container" style="margin-top: 10px;">
         <div class="recipe-card-dashed" onclick="openRecipeEditor()">
-            <div class="btn-circle-add"><i data-lucide="plus" size="24"></i></div>
+            <div class="btn-circle-add">
+                <i data-lucide="plus" size="24"></i>
+            </div>
             <div style="font-weight: 700; font-size: 1.1rem;">Neues Rezept</div>
             <div style="color: var(--text-muted); font-size: 0.85rem;">Füge deiner Sammlung ein<br>neues frisches Rezept hinzu.</div>
             <button class="btn-add-recipe">Hinzufügen</button>
@@ -282,7 +330,9 @@
 
 <div id="view-recipe-read" class="view-section">
     <div class="detail-top-bar">
-        <button class="btn-back" onclick="switchTab('recipes')"><i data-lucide="arrow-left" size="20"></i> Zurück</button>
+        <button class="btn-back" onclick="switchTab('recipes')">
+            <i data-lucide="arrow-left" size="20"></i> Zurück
+        </button>
         <button class="btn-back" onclick="editCurrentRecipe()"><i data-lucide="edit-2" size="20"></i></button>
     </div>
 
@@ -293,9 +343,7 @@
         <h1 id="readRecipeTitle" class="read-title"></h1>
 
         <h2 class="section-title">Zutaten</h2>
-        
-        <div id="readIngredientsList" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px; margin-top: 15px;">
-            </div>
+        <div id="readIngredientsList" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px; margin-top: 15px;"></div>
 
         <button class="btn-save-large" onclick="openTransferModal()">
             Zu Einkaufsliste hinzufügen
@@ -307,12 +355,14 @@
     <input type="file" id="imageUploadInput" accept="image/*" onchange="handleImageSelection(event)">
 
     <div class="detail-top-bar">
-        <button class="btn-back" onclick="switchTab('recipes')"><i data-lucide="arrow-left" size="20"></i> Abbrechen</button>
+        <button class="btn-back" onclick="switchTab('recipes')">
+            <i data-lucide="arrow-left" size="20"></i> Abbrechen
+        </button>
     </div>
 
     <div class="detail-image-area" id="editImageArea" style="background-image: url('https://images.unsplash.com/photo-1596683709605-72877a5ebbd3?q=80&w=800&auto=format&fit=crop');">
         <button class="btn-upload-img" id="btnUploadImage" onclick="document.getElementById('imageUploadInput').click()">
-            <i data-lucide="camera" size="20"></i> BILD HOCHLADEN
+            <svg width="12" height="11" viewBox="0 0 12 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.83333 8.45833C6.5625 8.45833 7.18229 8.20312 7.69271 7.69271C8.20312 7.18229 8.45833 6.5625 8.45833 5.83333C8.45833 5.10417 8.20312 4.48438 7.69271 3.97396C7.18229 3.46354 6.5625 3.20833 5.83333 3.20833C5.10417 3.20833 4.48438 3.46354 3.97396 3.97396C3.46354 4.48438 3.20833 5.10417 3.20833 5.83333C3.20833 6.5625 3.46354 7.18229 3.97396 7.69271C4.48438 8.20312 5.10417 8.45833 5.83333 8.45833ZM5.83333 7.29167C5.425 7.29167 5.07986 7.15069 4.79792 6.86875C4.51597 6.58681 4.375 6.24167 4.375 5.83333C4.375 5.425 4.51597 5.07986 4.79792 4.79792C5.07986 4.51597 5.425 4.375 5.83333 4.375C6.24167 4.375 6.58681 4.51597 6.86875 4.79792C7.15069 5.07986 7.29167 5.425 7.29167 5.83333C7.29167 6.24167 7.15069 6.58681 6.86875 6.86875C6.58681 7.15069 6.24167 7.29167 5.83333 7.29167ZM1.16667 10.5C0.845833 10.5 0.571181 10.3858 0.342708 10.1573C0.114236 9.92882 0 9.65417 0 9.33333V2.33333C0 2.0125 0.114236 1.73785 0.342708 1.50937C0.571181 1.2809 0.845833 1.16667 1.16667 1.16667H3.00417L4.08333 0H7.58333L8.6625 1.16667H10.5C10.8208 1.16667 11.0955 1.2809 11.324 1.50937C11.5524 1.73785 11.6667 2.0125 11.6667 2.33333V9.33333C11.6667 9.65417 11.5524 9.92882 11.324 10.1573C11.0955 10.3858 10.8208 10.5 10.5 10.5H1.16667ZM1.16667 9.33333H10.5V2.33333H8.1375L7.07292 1.16667H4.59375L3.52917 2.33333H1.16667V9.33333Z" fill="currentColor"/></svg> BILD HOCHLADEN
         </button>
     </div>
 
@@ -329,7 +379,9 @@
 
         <div class="ingredient-input-row">
             <input type="text" id="newIngredientInput" class="ingredient-input" placeholder="Zutat (z.B. 500g Hackfleisch)" onkeypress="if(event.key==='Enter') addIngredientToEditor()">
-            <button class="btn-add-main" onclick="addIngredientToEditor()"><i data-lucide="plus" color="#000"></i></button>
+            <button class="btn-add-main" onclick="addIngredientToEditor()">
+                <i data-lucide="plus" color="#000"></i>
+            </button>
         </div>
 
         <button class="btn-save-large" onclick="saveRecipe()">
@@ -337,22 +389,24 @@
         </button>
         
         <button class="btn-save-large" id="btnDeleteRecipe" style="background: var(--card-bg); color: var(--danger); border: 1px solid var(--danger); margin-top: 10px; display: none;" onclick="deleteCurrentRecipe()">
-            <i data-lucide="trash-2" size="22"></i> Rezept löschen
+            <svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 18C2.45 18 1.97917 17.8042 1.5875 17.4125C1.19583 17.0208 1 16.55 1 16V3H0V1H5V0H11V1H16V3H15V16C15 16.55 14.8042 17.0208 14.4125 17.4125C14.0208 17.8042 13.55 18 13 18H3ZM13 3H3V16H13V3ZM5 14H7V5H5V14ZM9 14H11V5H9V14ZM3 3V16V3Z" fill="currentColor"/></svg> 
+            Rezept löschen
         </button>
     </div>
 </div>
 
 <nav class="bottom-nav" id="mainNav">
     <div class="nav-item" id="nav-recipes" onclick="switchTab('recipes')">
-        <i data-lucide="utensils-crossed" size="22"></i><span>Rezepte</span>
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.4 18L0 16.6L10.25 6.35C9.95 5.65 9.90833 4.85833 10.125 3.975C10.3417 3.09167 10.8167 2.3 11.55 1.6C12.4333 0.716667 13.4167 0.2 14.5 0.05C15.5833 -0.1 16.4667 0.166667 17.15 0.85C17.8333 1.53333 18.1 2.41667 17.95 3.5C17.8 4.58333 17.2833 5.56667 16.4 6.45C15.7 7.18333 14.9083 7.65833 14.025 7.875C13.1417 8.09167 12.35 8.05 11.65 7.75L10.4 9L18 16.6L16.6 18L9 10.45L1.4 18ZM4.35 9.45L1.35 6.45C0.45 5.55 0 4.475 0 3.225C0 1.975 0.45 0.9 1.35 0L7.55 6.25L4.35 9.45Z" fill="currentColor"/></svg>
+        <span>Rezepte</span>
     </div>
     <div class="nav-item active" id="nav-shopping" onclick="switchTab('shopping')">
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M6 20C5.45 20 4.97917 19.8042 4.5875 19.4125C4.19583 19.0208 4 18.55 4 18C4 17.45 4.19583 16.9792 4.5875 16.5875C4.97917 16.1958 5.45 16 6 16C6.55 16 7.02083 16.1958 7.4125 16.5875C7.80417 16.9792 8 17.45 8 18C8 18.55 7.80417 19.0208 7.4125 19.4125C7.02083 19.8042 6.55 20 6 20ZM16 20C15.45 20 14.9792 19.8042 14.5875 19.4125C14.1958 19.0208 14 18.55 14 18C14 17.45 14.1958 16.9792 14.5875 16.5875C14.9792 16.1958 15.45 16 16 16C16.55 16 17.0208 16.1958 17.4125 16.5875C17.8042 16.9792 18 17.45 18 18C18 18.55 17.8042 19.0208 17.4125 19.4125C17.0208 19.8042 16.55 20 16 20ZM5.15 4L7.55 9H14.55L17.3 4H5.15ZM4.2 2H18.95C19.3333 2 19.625 2.17083 19.825 2.5125C20.025 2.85417 20.0333 3.2 19.85 3.55L16.3 9.95C16.1167 10.2833 15.8708 10.5417 15.5625 10.725C15.2542 10.9083 14.9167 11 14.55 11H7.1L6 13H18V15H6C5.25 15 4.68333 14.6708 4.3 14.0125C3.91667 13.3542 3.9 12.7 4.25 12.05L5.6 9.6L2 2H0V0H3.25L4.2 2ZM7.55 9H14.55H7.55Z" fill="currentColor"/>
-</svg>
-
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 20C5.45 20 4.97917 19.8042 4.5875 19.4125C4.19583 19.0208 4 18.55 4 18C4 17.45 4.19583 16.9792 4.5875 16.5875C4.97917 16.1958 5.45 16 6 16C6.55 16 7.02083 16.1958 7.4125 16.5875C7.80417 16.9792 8 17.45 8 18C8 18.55 7.80417 19.0208 7.4125 19.4125C7.02083 19.8042 6.55 20 6 20ZM16 20C15.45 20 14.9792 19.8042 14.5875 19.4125C14.1958 19.0208 14 18.55 14 18C14 17.45 14.1958 16.9792 14.5875 16.5875C14.9792 16.1958 15.45 16 16 16C16.55 16 17.0208 16.1958 17.4125 16.5875C17.8042 16.9792 18 17.45 18 18C18 18.55 17.8042 19.0208 17.4125 19.4125C17.0208 19.8042 16.55 20 16 20ZM5.15 4L7.55 9H14.55L17.3 4H5.15ZM4.2 2H18.95C19.3333 2 19.625 2.17083 19.825 2.5125C20.025 2.85417 20.0333 3.2 19.85 3.55L16.3 9.95C16.1167 10.2833 15.8708 10.5417 15.5625 10.725C15.2542 10.9083 14.9167 11 14.55 11H7.1L6 13H18V15H6C5.25 15 4.68333 14.6708 4.3 14.0125C3.91667 13.3542 3.9 12.7 4.25 12.05L5.6 9.6L2 2H0V0H3.25L4.2 2ZM7.55 9H14.55H7.55Z" fill="currentColor"/></svg>
+        <span>Einkauf</span>
+    </div>
     <div class="nav-item" onclick="openFavModal()">
-        <i data-lucide="heart" size="22"></i><span>Favoriten</span>
+        <svg width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 18.35L8.55 17.05C6.86667 15.5333 5.475 14.225 4.375 13.125C3.275 12.025 2.4 11.0375 1.75 10.1625C1.1 9.2875 0.645833 8.48333 0.3875 7.75C0.129167 7.01667 0 6.26667 0 5.5C0 3.93333 0.525 2.625 1.575 1.575C2.625 0.525 3.93333 0 5.5 0C6.36667 0 7.19167 0.183333 7.975 0.55C8.75833 0.916667 9.43333 1.43333 10 2.1C10.5667 1.43333 11.2417 0.916667 12.025 0.55C12.8083 0.183333 13.6333 0 14.5 0C16.0667 0 17.375 0.525 18.425 1.575C19.475 2.625 20 3.93333 20 5.5C20 6.26667 19.8708 7.01667 19.6125 7.75C19.3542 8.48333 18.9 9.2875 18.25 10.1625C17.6 11.0375 16.725 12.025 15.625 13.125C14.525 14.225 13.1333 15.5333 11.45 17.05L10 18.35ZM10 15.65C11.6 14.2167 12.9167 12.9875 13.95 11.9625C14.9833 10.9375 15.8 10.0458 16.4 9.2875C17 8.52917 17.4167 7.85417 17.65 7.2625C17.8833 6.67083 18 6.08333 18 5.5C18 4.5 17.6667 3.66667 17 3C16.3333 2.33333 15.5 2 14.5 2C13.7167 2 12.9917 2.22083 12.325 2.6625C11.6583 3.10417 11.2 3.66667 10.95 4.35H9.05C8.8 3.66667 8.34167 3.10417 7.675 2.6625C7.00833 2.22083 6.28333 2 5.5 2C4.5 2 3.66667 2.33333 3 3C2.33333 3.66667 2 4.5 2 5.5C2 6.08333 2.11667 6.67083 2.35 7.2625C2.58333 7.85417 3 8.52917 3.6 9.2875C4.2 10.0458 5.01667 10.9375 6.05 11.9625C7.08333 12.9875 8.4 14.2167 10 15.65Z" fill="currentColor"/></svg>
+        <span>Favoriten</span>
     </div>
 </nav>
 
@@ -384,6 +438,11 @@
     let selectedTransferItems = []; 
     let selectedFavs = [];
 
+    // --- DEINE EIGENEN SVGs FÜR JAVASCRIPT ---
+    const svgStarFilled = `<svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.1875 15.8333L4.54167 9.97917L0 6.04167L6 5.52083L8.33333 0L10.6667 5.52083L16.6667 6.04167L12.125 9.97917L13.4792 15.8333L8.33333 12.7292L3.1875 15.8333Z" fill="currentColor"/></svg>`;
+    const svgStarOutline = `<svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.70833 12.3542L8.33333 10.7708L10.9583 12.375L10.2708 9.375L12.5833 7.375L9.54167 7.10417L8.33333 4.27083L7.125 7.08333L4.08333 7.35417L6.39583 9.375L5.70833 12.3542ZM3.1875 15.8333L4.54167 9.97917L0 6.04167L6 5.52083L8.33333 0L10.6667 5.52083L16.6667 6.04167L12.125 9.97917L13.4792 15.8333L8.33333 12.7292L3.1875 15.8333Z" fill="currentColor"/></svg>`;
+    const svgCamera = `<svg width="12" height="11" viewBox="0 0 12 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.83333 8.45833C6.5625 8.45833 7.18229 8.20312 7.69271 7.69271C8.20312 7.18229 8.45833 6.5625 8.45833 5.83333C8.45833 5.10417 8.20312 4.48438 7.69271 3.97396C7.18229 3.46354 6.5625 3.20833 5.83333 3.20833C5.10417 3.20833 4.48438 3.46354 3.97396 3.97396C3.46354 4.48438 3.20833 5.10417 3.20833 5.83333C3.20833 6.5625 3.46354 7.18229 3.97396 7.69271C4.48438 8.20312 5.10417 8.45833 5.83333 8.45833ZM5.83333 7.29167C5.425 7.29167 5.07986 7.15069 4.79792 6.86875C4.51597 6.58681 4.375 6.24167 4.375 5.83333C4.375 5.425 4.51597 5.07986 4.79792 4.79792C5.07986 4.51597 5.425 4.375 5.83333 4.375C6.24167 4.375 6.58681 4.51597 6.86875 4.79792C7.15069 5.07986 7.29167 5.425 7.29167 5.83333C7.29167 6.24167 7.15069 6.58681 6.86875 6.86875C6.58681 7.15069 6.24167 7.29167 5.83333 7.29167ZM1.16667 10.5C0.845833 10.5 0.571181 10.3858 0.342708 10.1573C0.114236 9.92882 0 9.65417 0 9.33333V2.33333C0 2.0125 0.114236 1.73785 0.342708 1.50937C0.571181 1.2809 0.845833 1.16667 1.16667 1.16667H3.00417L4.08333 0H7.58333L8.6625 1.16667H10.5C10.8208 1.16667 11.0955 1.2809 11.324 1.50937C11.5524 1.73785 11.6667 2.0125 11.6667 2.33333V9.33333C11.6667 9.65417 11.5524 9.92882 11.324 10.1573C11.0955 10.3858 10.8208 10.5 10.5 10.5H1.16667ZM1.16667 9.33333H10.5V2.33333H8.1375L7.07292 1.16667H4.59375L3.52917 2.33333H1.16667V9.33333Z" fill="currentColor"/></svg>`;
+
     lucide.createIcons();
 
     // --- NAVIGATION ---
@@ -400,10 +459,30 @@
         }
     }
 
+    window.openNewListModal = function() {
+        document.getElementById('mainOverlay').classList.add('show');
+        document.getElementById('newListModal').classList.add('show');
+        document.getElementById('newListInput').focus();
+    }
+
     window.closeAllModals = function() {
         document.getElementById('mainOverlay').classList.remove('show');
         document.getElementById('favModal').classList.remove('show');
         document.getElementById('transferModal').classList.remove('show');
+        document.getElementById('newListModal').classList.remove('show');
+    }
+
+    // --- NEUE LISTE LOGIK ---
+    window.submitNewList = async function() {
+        const input = document.getElementById('newListInput');
+        const name = input.value.trim();
+        if (name) {
+            await addDoc(collection(db, "shopping_lists"), { name: name, createdAt: serverTimestamp() });
+            currentList = name;
+            localStorage.setItem('lastActiveList', currentList);
+            input.value = '';
+            closeAllModals();
+        }
     }
 
     // --- REZEPTE LOGIK ---
@@ -420,7 +499,6 @@
         const container = document.getElementById('recipesListContainer');
         container.innerHTML = '';
         recipes.forEach(recipe => {
-            // "Undefined" oder komplett leere Titel abfangen
             if(!recipe.title || recipe.title === 'undefined') return; 
             
             const card = document.createElement('div');
@@ -535,7 +613,7 @@
         editingRecipe = { id: null, title: '', imageUrl: 'https://images.unsplash.com/photo-1596683709605-72877a5ebbd3?q=80&w=800&auto=format&fit=crop', ingredients: [] };
         document.getElementById('recipeTitleInput').value = '';
         document.getElementById('editImageArea').style.backgroundImage = `url('${editingRecipe.imageUrl}')`;
-        document.getElementById('btnUploadImage').innerHTML = '<i data-lucide="camera" size="20"></i> BILD HOCHLADEN';
+        document.getElementById('btnUploadImage').innerHTML = `${svgCamera} BILD HOCHLADEN`;
         document.getElementById('btnDeleteRecipe').style.display = 'none'; // Verstecken beim Neu erstellen
         renderEditorIngredients();
 
@@ -551,7 +629,7 @@
         
         document.getElementById('recipeTitleInput').value = editingRecipe.title;
         document.getElementById('editImageArea').style.backgroundImage = `url('${editingRecipe.imageUrl}')`;
-        document.getElementById('btnUploadImage').innerHTML = '<i data-lucide="camera" size="20"></i> BILD ÄNDERN';
+        document.getElementById('btnUploadImage').innerHTML = `${svgCamera} BILD ÄNDERN`;
         document.getElementById('btnDeleteRecipe').style.display = 'flex'; // Einblenden beim Bearbeiten
         renderEditorIngredients();
 
@@ -577,10 +655,10 @@
             const downloadURL = await getDownloadURL(fileRef);
             editingRecipe.imageUrl = downloadURL; 
             btnUpload.innerHTML = 'FERTIG!';
-            setTimeout(() => { btnUpload.innerHTML = '<i data-lucide="camera" size="20"></i> BILD ÄNDERN'; lucide.createIcons(); }, 2000);
+            setTimeout(() => { btnUpload.innerHTML = `${svgCamera} BILD ÄNDERN`; lucide.createIcons(); }, 2000);
         } catch (error) {
             alert("Fehler beim Hochladen: " + error.message);
-            btnUpload.innerHTML = '<i data-lucide="camera" size="20"></i> BILD HOCHLADEN';
+            btnUpload.innerHTML = 'FEHLER';
         }
     }
 
@@ -683,15 +761,22 @@
         items.forEach((item) => {
             const row = document.createElement('div');
             row.className = 'item-row';
-            const starIcon = item.fav ? '<i data-lucide="star" fill="currentColor"></i>' : '<i data-lucide="star"></i>';
+            const starIcon = item.fav ? svgStarFilled : svgStarOutline;
             row.innerHTML = `
-                <button class="btn-star ${item.fav ? 'is-fav' : ''}">${starIcon}</button>
+                <button class="btn-star ${item.fav ? 'is-fav' : ''}" onclick="toggleFavCloud('${item.id}', ${item.fav}, '${item.name}')">${starIcon}</button>
                 <div class="name-text">${item.name}</div>
                 <button class="btn-delete" onclick="requestDelete('${item.id}')"><i data-lucide="x" size="20"></i></button>
             `;
             listContainer.appendChild(row);
         });
         lucide.createIcons(); 
+    }
+
+    window.toggleFavCloud = async function(id, currentStatus, name) {
+        await updateDoc(doc(db, "shopping_items", id), { fav: !currentStatus });
+        if (!currentStatus && !favorites.includes(name)) {
+            await addDoc(collection(db, "favorites"), { name: name });
+        }
     }
 
     window.requestDelete = async function(id) { await deleteDoc(doc(db, "shopping_items", id)); }
