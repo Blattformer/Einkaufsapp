@@ -31,15 +31,20 @@
         }
 
         /* --- VIEWS --- */
-        .view-section { display: none; padding-bottom: 120px; min-height: 100vh;}
+        .view-section { display: none; padding-bottom: 140px; min-height: 100vh;}
         .view-section.active { display: block; }
 
-        /* --- HEADER EINKAUF --- */
+        /* --- HEADER EINKAUF & REZEPTE --- */
         .header-container {
             position: relative;
             background-image: linear-gradient(to bottom, rgba(10,10,12,0.1) 0%, rgba(10,10,12,1) 100%), url('https://images.unsplash.com/photo-1606914501449-5a96b6ce24ca?q=80&w=800&auto=format&fit=crop');
             background-size: cover; background-position: center;
             padding: 60px 20px 20px 20px;
+        }
+        
+        /* Zweites Bild für die Rezept-Seite */
+        .header-container.recipe-header-bg {
+            background-image: linear-gradient(to bottom, rgba(10,10,12,0.1) 0%, rgba(10,10,12,1) 100%), url('https://images.unsplash.com/photo-1495521821757-a1efb6729352?q=80&w=800&auto=format&fit=crop');
         }
 
         .btn-sort-top {
@@ -104,7 +109,6 @@
         .btn-add-main { background: var(--primary); color: #000; border: none; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
         /* --- REZEPTE ÜBERSICHT --- */
-        .recipe-header { padding: 60px 20px 20px; }
         .recipe-title-main { font-size: 2rem; font-weight: 700; margin: 0; }
         
         .recipe-card {
@@ -126,7 +130,7 @@
 
         /* --- REZEPT DETAILS (ALLGEMEIN) --- */
         .detail-top-bar {
-            position: absolute; top: 0; left: 0; right: 0; padding: 20px; display: flex; align-items: center; gap: 15px;
+            position: absolute; top: 0; left: 0; right: 0; padding: 20px; display: flex; align-items: center; justify-content: space-between;
             z-index: 10; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
         }
         .btn-back { background: none; border: none; color: var(--primary); display: flex; align-items: center; gap: 10px; font-size: 1.1rem; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; cursor: pointer; }
@@ -207,16 +211,6 @@
         .btn-fav-submit { width: 100%; background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 12px; font-weight: 700; font-size: 1.05rem; font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; opacity: 0.5; pointer-events: none; transition: opacity 0.2s; }
         .btn-fav-submit.ready { opacity: 1; pointer-events: auto; }
 
-        /* Undo Toast */
-        .undo-toast {
-            position: fixed; bottom: 180px; left: 50%; transform: translateX(-50%) translateY(50px);
-            background: #2c2c2e; padding: 10px 18px; border-radius: 30px; display: flex; align-items: center; gap: 15px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5); opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 4000; font-size: 0.8rem; white-space: nowrap;
-        }
-        .undo-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
-        .undo-text { color: var(--text-main); }
-        .undo-btn { color: var(--primary); font-weight: bold; background: none; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; padding: 0;}
-
         #imageUploadInput { display: none; }
     </style>
 </head>
@@ -257,7 +251,7 @@
                 <select id="listSelect" onchange="switchList()"></select>
                 <i data-lucide="chevron-down" size="20" class="select-arrow"></i>
             </div>
-            <button class="header-btn add" onclick="alert('Neue Liste: Kommt bald im Modal!')"><i data-lucide="plus" size="24"></i></button>
+            <button class="header-btn add" onclick="alert('Neue Liste Funktion!')"><i data-lucide="plus" size="24"></i></button>
             <button class="header-btn del" onclick="deleteCurrentList()"><i data-lucide="trash-2" size="20"></i></button>
         </div>
     </div>
@@ -269,9 +263,9 @@
 </div>
 
 <div id="view-recipes" class="view-section">
-    <div class="recipe-header">
-        <div class="header-subtitle">Inspiration</div>
-        <h1 class="recipe-title-main">Deine Rezepte</h1>
+    <div class="header-container recipe-header-bg">
+        <div class="header-subtitle"><span class="header-subtitle-green">Inspiration</span></div>
+        <h1 class="recipe-title-main" style="margin-top: 5px;">Deine Rezepte</h1>
     </div>
 
     <div class="list-container" id="recipesListContainer"></div>
@@ -286,9 +280,10 @@
     </div>
 </div>
 
-<div id="view-recipe-read" class="view-section" style="padding-bottom: 40px;">
+<div id="view-recipe-read" class="view-section">
     <div class="detail-top-bar">
-        <button class="btn-back" onclick="switchTab('recipes')"><i data-lucide="arrow-left" size="20"></i> Zu den Rezepten</button>
+        <button class="btn-back" onclick="switchTab('recipes')"><i data-lucide="arrow-left" size="20"></i> Zurück</button>
+        <button class="btn-back" onclick="editCurrentRecipe()"><i data-lucide="edit-2" size="20"></i></button>
     </div>
 
     <div class="detail-image-area" id="readImageArea"></div>
@@ -308,7 +303,7 @@
     </div>
 </div>
 
-<div id="view-recipe-edit" class="view-section" style="padding-bottom: 40px;">
+<div id="view-recipe-edit" class="view-section">
     <input type="file" id="imageUploadInput" accept="image/*" onchange="handleImageSelection(event)">
 
     <div class="detail-top-bar">
@@ -340,6 +335,10 @@
         <button class="btn-save-large" onclick="saveRecipe()">
             <i data-lucide="check-circle-2" size="22"></i> Rezept Speichern
         </button>
+        
+        <button class="btn-save-large" id="btnDeleteRecipe" style="background: var(--card-bg); color: var(--danger); border: 1px solid var(--danger); margin-top: 10px; display: none;" onclick="deleteCurrentRecipe()">
+            <i data-lucide="trash-2" size="22"></i> Rezept löschen
+        </button>
     </div>
 </div>
 
@@ -350,10 +349,10 @@
     <div class="nav-item active" id="nav-shopping" onclick="switchTab('shopping')">
         <i data-lucide="shopping-cart" size="22"></i><span>Einkauf</span>
     </div>
+    <div class="nav-item" onclick="openFavModal()">
+        <i data-lucide="heart" size="22"></i><span>Favoriten</span>
+    </div>
 </nav>
-
-<div class="undo-toast" id="undoToast"><span class="undo-text">Element gelöscht</span><button class="undo-btn" onclick="performUndo()">RÜCKGÄNGIG</button></div>
-
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -373,13 +372,15 @@
     const db = getFirestore(app);
     const storage = getStorage(app);
 
-    let currentList = "Wocheneinkauf";
+    let currentList = localStorage.getItem('lastActiveList') || "Wocheneinkauf";
     let localItems = []; 
+    let favorites = [];
     let recipes = [];
     
-    let editingRecipe = { title: '', imageUrl: '', ingredients: [] };
+    let editingRecipe = { id: null, title: '', imageUrl: '', ingredients: [] };
     let currentViewingRecipe = null;
-    let selectedTransferItems = []; // Für das Transfer Modal
+    let selectedTransferItems = []; 
+    let selectedFavs = [];
 
     lucide.createIcons();
 
@@ -387,7 +388,6 @@
     window.switchTab = function(tabName) {
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-        document.getElementById('mainNav').style.display = 'flex'; 
 
         if(tabName === 'shopping') {
             document.getElementById('view-shopping').classList.add('active');
@@ -418,6 +418,9 @@
         const container = document.getElementById('recipesListContainer');
         container.innerHTML = '';
         recipes.forEach(recipe => {
+            // "Undefined" oder komplett leere Titel abfangen
+            if(!recipe.title || recipe.title === 'undefined') return; 
+            
             const card = document.createElement('div');
             card.className = 'recipe-card';
             card.innerHTML = `
@@ -427,17 +430,15 @@
                     <div class="recipe-card-icon"><i data-lucide="utensils-crossed" size="18"></i></div>
                 </div>
             `;
-            // Klick auf das Rezept öffnet die LESE-Ansicht
             card.onclick = () => openRecipeView(recipe);
             container.appendChild(card);
         });
         lucide.createIcons();
     }
 
-    // --- LESE ANSICHT (NEU) ---
+    // --- LESE ANSICHT ---
     window.openRecipeView = function(recipe) {
         currentViewingRecipe = recipe;
-        
         document.getElementById('readImageArea').style.backgroundImage = `url('${recipe.imageUrl}')`;
         document.getElementById('readRecipeTitle').innerText = recipe.title;
         
@@ -457,17 +458,13 @@
 
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
         document.getElementById('view-recipe-read').classList.add('active');
-        document.getElementById('mainNav').style.display = 'none'; 
     }
 
-    // --- TRANSFER MODAL (Die Brücke) ---
+    // --- TRANSFER MODAL ---
     window.openTransferModal = function() {
         if (!currentViewingRecipe || !currentViewingRecipe.ingredients) return;
-        
         const container = document.getElementById('transferListContainer');
         container.innerHTML = '';
-        
-        // Alle Zutaten standardmäßig auswählen
         selectedTransferItems = [...currentViewingRecipe.ingredients];
         
         currentViewingRecipe.ingredients.forEach((ing, index) => {
@@ -512,12 +509,10 @@
 
     window.submitTransfer = async function() {
         if(selectedTransferItems.length === 0) return;
-        
         const batch = writeBatch(db);
         const baseSortOrder = Date.now();
         
         selectedTransferItems.forEach((ingredientName, idx) => {
-            // Prüfen ob die Zutat schon exakt so auf der Liste steht (Vermeidet Duplikate)
             const exists = localItems.some(item => item.name.toLowerCase() === ingredientName.toLowerCase());
             if (!exists) {
                 const ref = doc(collection(db, "shopping_items"));
@@ -530,22 +525,36 @@
         
         await batch.commit();
         closeAllModals();
-        
-        // Magischer Wechsel zum Einkaufswagen
         switchTab('shopping');
     }
 
-    // --- EDITOR ---
+    // --- EDITOR (Erstellen / Bearbeiten) ---
     window.openRecipeEditor = function() {
-        editingRecipe = { title: '', imageUrl: 'https://images.unsplash.com/photo-1596683709605-72877a5ebbd3?q=80&w=800&auto=format&fit=crop', ingredients: [] };
+        editingRecipe = { id: null, title: '', imageUrl: 'https://images.unsplash.com/photo-1596683709605-72877a5ebbd3?q=80&w=800&auto=format&fit=crop', ingredients: [] };
         document.getElementById('recipeTitleInput').value = '';
         document.getElementById('editImageArea').style.backgroundImage = `url('${editingRecipe.imageUrl}')`;
         document.getElementById('btnUploadImage').innerHTML = '<i data-lucide="camera" size="20"></i> BILD HOCHLADEN';
+        document.getElementById('btnDeleteRecipe').style.display = 'none'; // Verstecken beim Neu erstellen
         renderEditorIngredients();
 
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
         document.getElementById('view-recipe-edit').classList.add('active');
-        document.getElementById('mainNav').style.display = 'none'; 
+        lucide.createIcons();
+    }
+
+    // Neu: Bestehendes Rezept bearbeiten
+    window.editCurrentRecipe = function() {
+        editingRecipe = { ...currentViewingRecipe }; // Daten kopieren
+        if(!editingRecipe.ingredients) editingRecipe.ingredients = [];
+        
+        document.getElementById('recipeTitleInput').value = editingRecipe.title;
+        document.getElementById('editImageArea').style.backgroundImage = `url('${editingRecipe.imageUrl}')`;
+        document.getElementById('btnUploadImage').innerHTML = '<i data-lucide="camera" size="20"></i> BILD ÄNDERN';
+        document.getElementById('btnDeleteRecipe').style.display = 'flex'; // Einblenden beim Bearbeiten
+        renderEditorIngredients();
+
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        document.getElementById('view-recipe-edit').classList.add('active');
         lucide.createIcons();
     }
 
@@ -607,13 +616,29 @@
         const title = document.getElementById('recipeTitleInput').value.trim();
         if(!title) { alert("Bitte gib dem Rezept einen Namen!"); return; }
         editingRecipe.title = title;
-        await addDoc(collection(db, "recipes"), {
-            title: editingRecipe.title, imageUrl: editingRecipe.imageUrl, ingredients: editingRecipe.ingredients, createdAt: serverTimestamp()
-        });
+        
+        if (editingRecipe.id) {
+            // Rezept Updaten
+            await updateDoc(doc(db, "recipes", editingRecipe.id), {
+                title: editingRecipe.title, imageUrl: editingRecipe.imageUrl, ingredients: editingRecipe.ingredients
+            });
+        } else {
+            // Neues Rezept erstellen
+            await addDoc(collection(db, "recipes"), {
+                title: editingRecipe.title, imageUrl: editingRecipe.imageUrl, ingredients: editingRecipe.ingredients, createdAt: serverTimestamp()
+            });
+        }
         switchTab('recipes');
     }
 
-    // --- EINKAUFSLISTEN LOGIK ---
+    window.deleteCurrentRecipe = async function() {
+        if(confirm(`Möchtest du das Rezept "${editingRecipe.title}" wirklich löschen?`)) {
+            await deleteDoc(doc(db, "recipes", editingRecipe.id));
+            switchTab('recipes');
+        }
+    }
+
+    // --- EINKAUFSLISTEN & FAVORITEN LOGIK ---
     function subscribeToAllLists() {
         const q = query(collection(db, "shopping_lists"), orderBy("createdAt", "asc"));
         onSnapshot(q, (snapshot) => {
@@ -639,6 +664,14 @@
             localItems = [];
             snapshot.forEach((doc) => localItems.push({ id: doc.id, ...doc.data() }));
             renderList(localItems);
+        });
+    }
+
+    function subscribeToFavorites() {
+        const q = query(collection(db, "favorites"), orderBy("name", "asc"));
+        onSnapshot(q, (snapshot) => {
+            favorites = [];
+            snapshot.forEach(doc => favorites.push(doc.data().name));
         });
     }
 
@@ -668,9 +701,57 @@
         }
     }
 
+    window.openFavModal = function() {
+        const container = document.getElementById('favListContainer');
+        selectedFavs = [];
+        updateFavButton();
+        container.innerHTML = '';
+
+        if(favorites.length === 0) {
+            container.innerHTML = '<div style="color:var(--text-muted); text-align:center; padding: 20px;">Keine Favoriten gespeichert.</div>';
+        } else {
+            const uniqueFavs = [...new Set(favorites)];
+            uniqueFavs.forEach(fav => {
+                const row = document.createElement('div');
+                row.className = 'fav-row';
+                row.innerHTML = `<div class="custom-checkbox"><i data-lucide="check" size="16" class="check-mark"></i></div><span style="font-size: 1.1rem;">${fav}</span>`;
+                row.onclick = () => {
+                    if(selectedFavs.includes(fav)) { selectedFavs = selectedFavs.filter(f => f !== fav); row.classList.remove('selected'); } 
+                    else { selectedFavs.push(fav); row.classList.add('selected'); }
+                    updateFavButton();
+                };
+                container.appendChild(row);
+            });
+            lucide.createIcons();
+        }
+        document.getElementById('mainOverlay').classList.add('show');
+        document.getElementById('favModal').classList.add('show');
+    }
+
+    function updateFavButton() {
+        const btn = document.getElementById('btnSubmitFavs');
+        if(selectedFavs.length > 0) { btn.classList.add('ready'); btn.innerText = `Ausgewählte hinzufügen (${selectedFavs.length})`; } 
+        else { btn.classList.remove('ready'); btn.innerText = `Ausgewählte hinzufügen (0)`; }
+    }
+
+    window.submitFavs = async function() {
+        if(selectedFavs.length === 0) return;
+        const batch = writeBatch(db);
+        selectedFavs.forEach((name, idx) => {
+            const exists = localItems.some(item => item.name.toLowerCase() === name.toLowerCase());
+            if (!exists) {
+                const ref = doc(collection(db, "shopping_items"));
+                batch.set(ref, { name: name, qty: "", fav: true, listName: currentList, createdAt: serverTimestamp(), sortOrder: Date.now() + idx });
+            }
+        });
+        await batch.commit();
+        closeAllModals();
+    }
+
     // Start
     subscribeToAllLists();
     subscribeToRecipes();
+    subscribeToFavorites();
 
 </script>
 </body>
