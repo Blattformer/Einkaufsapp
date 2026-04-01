@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de"> 
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -31,7 +31,7 @@
         }
 
         /* --- VIEWS --- */
-        .view-section { display: none; padding-bottom: 140px; min-height: 100vh;}
+        .view-section { display: none; padding-bottom: 190px; min-height: 100vh;}
         .view-section.active { display: block; }
 
         /* --- HEADER EINKAUF & REZEPTE --- */
@@ -42,16 +42,8 @@
             padding: 60px 20px 20px 20px;
         }
         
-        /* Zweites Bild für die Rezept-Seite */
         .header-container.recipe-header-bg {
             background-image: linear-gradient(to bottom, rgba(10,10,12,0.1) 0%, rgba(10,10,12,1) 100%), url('img/header-rezepte.jpg');
-        }
-
-        .btn-sort-top {
-            position: absolute; top: 20px; right: 20px;
-            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            border: none; color: var(--primary); width: 40px; height: 40px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
         }
 
         .header-subtitle { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700; margin-bottom: 5px; }
@@ -61,7 +53,7 @@
 
         .list-select-wrapper { 
             flex-grow: 1; position: relative; 
-            background: rgba(53, 53, 52, 0.4); /* Dein Figma-Wert: #353534 bei 40% */
+            background: rgba(53, 53, 52, 0.4); 
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center;
         }
@@ -75,7 +67,7 @@
         .select-arrow { position: absolute; right: 12px; color: var(--text-muted); pointer-events: none; }
 
         .header-btn {
-            background: rgba(53, 53, 52, 0.4); /* Dein Figma-Wert: #353534 bei 40% */
+            background: rgba(53, 53, 52, 0.4); 
             backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255,255,255,0.1); color: var(--text-main); width: 48px; height: 48px; 
             border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer;
@@ -228,6 +220,15 @@
         .btn-fav-submit { width: 100%; background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 12px; font-weight: 700; font-size: 1.05rem; font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; opacity: 0.5; pointer-events: none; transition: opacity 0.2s; }
         .btn-fav-submit.ready { opacity: 1; pointer-events: auto; }
 
+        .undo-toast {
+            position: fixed; bottom: 180px; left: 50%; transform: translateX(-50%) translateY(50px);
+            background: #2c2c2e; padding: 10px 18px; border-radius: 30px; display: flex; align-items: center; gap: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5); opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 4000; font-size: 0.8rem; white-space: nowrap;
+        }
+        .undo-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+        .undo-text { color: var(--text-main); }
+        .undo-btn { color: var(--primary); font-weight: bold; background: none; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; padding: 0;}
+
         #imageUploadInput { display: none; }
     </style>
 </head>
@@ -237,10 +238,10 @@
 
 <div class="modal-centered" id="newListModal">
     <button class="modal-close-top" onclick="closeAllModals()">
-        <i data-lucide="x" size="18"></i>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M1.4 14L0 12.6L5.6 7L0 1.4L1.4 0L7 5.6L12.6 0L14 1.4L8.4 7L14 12.6L12.6 14L7 8.4L1.4 14Z"/></svg>
     </button>
     <div class="modal-icon-wrapper">
-        <svg width="28" height="25" viewBox="0 0 28 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 25C10.7708 25 9.14583 24.6719 7.625 24.0156C6.10417 23.3594 4.78125 22.4688 3.65625 21.3438C2.53125 20.2188 1.64062 18.8958 0.984375 17.375C0.328125 15.8542 0 14.2292 0 12.5C0 10.7708 0.328125 9.14583 0.984375 7.625C1.64062 6.10417 2.53125 4.78125 3.65625 3.65625C4.78125 2.53125 6.10417 1.64062 7.625 0.984375C9.14583 0.328125 10.7708 0 12.5 0C13.8542 0 15.1354 0.197917 16.3438 0.59375C17.5521 0.989583 18.6667 1.54167 19.6875 2.25L17.875 4.09375C17.0833 3.59375 16.2396 3.20312 15.3438 2.92188C14.4479 2.64062 13.5 2.5 12.5 2.5C9.72917 2.5 7.36979 3.47396 5.42188 5.42188C3.47396 7.36979 2.5 9.72917 2.5 12.5C2.5 15.2708 3.47396 17.6302 5.42188 19.5781C7.36979 21.526 9.72917 22.5 12.5 22.5C13.1667 22.5 13.8125 22.4375 14.4375 22.3125C15.0625 22.1875 15.6667 22.0104 16.25 21.7812L18.125 23.6875C17.2708 24.1042 16.375 24.4271 15.4375 24.6562C14.5 24.8854 13.5208 25 12.5 25ZM21.25 22.5V18.75H17.5V16.25H21.25V12.5H23.75V16.25H27.5V18.75H23.75V22.5H21.25ZM10.75 18.25L5.4375 12.9375L7.1875 11.1875L10.75 14.75L23.25 2.21875L25 3.96875L10.75 18.25Z" fill="currentColor"/></svg>
+        <svg width="28" height="25" viewBox="0 0 28 25" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 25C10.7708 25 9.14583 24.6719 7.625 24.0156C6.10417 23.3594 4.78125 22.4688 3.65625 21.3438C2.53125 20.2188 1.64062 18.8958 0.984375 17.375C0.328125 15.8542 0 14.2292 0 12.5C0 10.7708 0.328125 9.14583 0.984375 7.625C1.64062 6.10417 2.53125 4.78125 3.65625 3.65625C4.78125 2.53125 6.10417 1.64062 7.625 0.984375C9.14583 0.328125 10.7708 0 12.5 0C13.8542 0 15.1354 0.197917 16.3438 0.59375C17.5521 0.989583 18.6667 1.54167 19.6875 2.25L17.875 4.09375C17.0833 3.59375 16.2396 3.20312 15.3438 2.92188C14.4479 2.64062 13.5 2.5 12.5 2.5C9.72917 2.5 7.36979 3.47396 5.42188 5.42188C3.47396 7.36979 2.5 9.72917 2.5 12.5C2.5 15.2708 3.47396 17.6302 5.42188 19.5781C7.36979 21.526 9.72917 22.5 12.5 22.5C13.1667 22.5 13.8125 22.4375 14.4375 22.3125C15.0625 22.1875 15.6667 22.0104 16.25 21.7812L18.125 23.6875C17.2708 24.1042 16.375 24.4271 15.4375 24.6562C14.5 24.8854 13.5208 25 12.5 25ZM21.25 22.5V18.75H17.5V16.25H21.25V12.5H23.75V16.25H27.5V18.75H23.75V22.5H21.25ZM10.75 18.25L5.4375 12.9375L7.1875 11.1875L10.75 14.75L23.25 2.21875L25 3.96875L10.75 18.25Z" fill="currentColor"/></svg>
     </div>
     <h2 class="modal-title">Neue Einkaufsliste</h2>
     <p class="modal-subtitle">Organisieren Sie Ihre kulinarischen Einkäufe</p>
@@ -262,7 +263,7 @@
             <p class="modal-subtitle" style="text-align:left; margin-bottom:0; color: var(--text-muted); font-size: 0.9rem;">Meistgekaufte Produkte schnell hinzufügen</p>
         </div>
         <button class="modal-close-top" style="position:relative; top:0; right:0; background: rgba(255,255,255,0.05); border: none; color: var(--text-muted); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;" onclick="closeAllModals()">
-            <i data-lucide="x" size="18"></i>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M1.4 14L0 12.6L5.6 7L0 1.4L1.4 0L7 5.6L12.6 0L14 1.4L8.4 7L14 12.6L12.6 14L7 8.4L1.4 14Z"/></svg>
         </button>
     </div>
     <div class="fav-list" id="favListContainer"></div>
@@ -276,7 +277,7 @@
             <h2 class="modal-title" style="text-align:left; font-size: 1.3rem; margin-top: 0;">Welche Zutaten<br>brauchst du?</h2>
         </div>
         <button class="modal-close-top" style="position:relative; top:0; right:0; background: rgba(255,255,255,0.05); border: none; color: var(--text-muted); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;" onclick="closeAllModals()">
-            <i data-lucide="x" size="18"></i>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M1.4 14L0 12.6L5.6 7L0 1.4L1.4 0L7 5.6L12.6 0L14 1.4L8.4 7L14 12.6L12.6 14L7 8.4L1.4 14Z"/></svg>
         </button>
     </div>
     <div class="fav-list" id="transferListContainer"></div>
@@ -292,10 +293,10 @@
                 <i data-lucide="chevron-down" size="20" class="select-arrow"></i>
             </div>
             <button class="header-btn add" onclick="openNewListModal()">
-                <i data-lucide="plus" size="24"></i>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M5 6.66667H0V5H5V0H6.66667V5H11.6667V6.66667H6.66667V11.6667H5V6.66667Z"/></svg>
             </button>
             <button class="header-btn del" onclick="deleteCurrentList()">
-                <svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 18C2.45 18 1.97917 17.8042 1.5875 17.4125C1.19583 17.0208 1 16.55 1 16V3H0V1H5V0H11V1H16V3H15V16C15 16.55 14.8042 17.0208 14.4125 17.4125C14.0208 17.8042 13.55 18 13 18H3ZM13 3H3V16H13V3ZM5 14H7V5H5V14ZM9 14H11V5H9V14ZM3 3V16V3Z" fill="currentColor"/></svg>
+                <svg width="20" height="20" viewBox="0 0 16 18" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3 18C2.45 18 1.97917 17.8042 1.5875 17.4125C1.19583 17.0208 1 16.55 1 16V3H0V1H5V0H11V1H16V3H15V16C15 16.55 14.8042 17.0208 14.4125 17.4125C14.0208 17.8042 13.55 18 13 18H3ZM13 3H3V16H13V3ZM5 14H7V5H5V14ZM9 14H11V5H9V14ZM3 3V16V3Z"/></svg>
             </button>
         </div>
     </div>
@@ -303,7 +304,7 @@
     <div class="add-area">
         <input type="text" id="newItemName" placeholder="Artikel hinzufügen..." enterkeyhint="go" onkeypress="if(event.key==='Enter') addItem()">
         <button class="btn-add-main" onclick="addItem()">
-            <i data-lucide="plus" color="#000" stroke-width="3"></i>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M5 6.66667H0V5H5V0H6.66667V5H11.6667V6.66667H6.66667V11.6667H5V6.66667Z"/></svg>
         </button>
     </div>
 </div>
@@ -319,7 +320,7 @@
     <div class="list-container" style="margin-top: 10px;">
         <div class="recipe-card-dashed" onclick="openRecipeEditor()">
             <div class="btn-circle-add">
-                <i data-lucide="plus" size="24"></i>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M5 6.66667H0V5H5V0H6.66667V5H11.6667V6.66667H6.66667V11.6667H5V6.66667Z"/></svg>
             </div>
             <div style="font-weight: 700; font-size: 1.1rem;">Neues Rezept</div>
             <div style="color: var(--text-muted); font-size: 0.85rem;">Füge deiner Sammlung ein<br>neues frisches Rezept hinzu.</div>
@@ -331,7 +332,8 @@
 <div id="view-recipe-read" class="view-section">
     <div class="detail-top-bar">
         <button class="btn-back" onclick="switchTab('recipes')">
-            <i data-lucide="arrow-left" size="20"></i> Zurück
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3.825 9L9.425 14.6L8 16L0 8L8 0L9.425 1.4L3.825 7H16V9H3.825Z"/></svg>
+            Zurück
         </button>
         <button class="btn-back" onclick="editCurrentRecipe()"><i data-lucide="edit-2" size="20"></i></button>
     </div>
@@ -356,13 +358,14 @@
 
     <div class="detail-top-bar">
         <button class="btn-back" onclick="switchTab('recipes')">
-            <i data-lucide="arrow-left" size="20"></i> Abbrechen
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3.825 9L9.425 14.6L8 16L0 8L8 0L9.425 1.4L3.825 7H16V9H3.825Z"/></svg>
+            Abbrechen
         </button>
     </div>
 
     <div class="detail-image-area" id="editImageArea" style="background-image: url('https://images.unsplash.com/photo-1596683709605-72877a5ebbd3?q=80&w=800&auto=format&fit=crop');">
         <button class="btn-upload-img" id="btnUploadImage" onclick="document.getElementById('imageUploadInput').click()">
-            <svg width="12" height="11" viewBox="0 0 12 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.83333 8.45833C6.5625 8.45833 7.18229 8.20312 7.69271 7.69271C8.20312 7.18229 8.45833 6.5625 8.45833 5.83333C8.45833 5.10417 8.20312 4.48438 7.69271 3.97396C7.18229 3.46354 6.5625 3.20833 5.83333 3.20833C5.10417 3.20833 4.48438 3.46354 3.97396 3.97396C3.46354 4.48438 3.20833 5.10417 3.20833 5.83333C3.20833 6.5625 3.46354 7.18229 3.97396 7.69271C4.48438 8.20312 5.10417 8.45833 5.83333 8.45833ZM5.83333 7.29167C5.425 7.29167 5.07986 7.15069 4.79792 6.86875C4.51597 6.58681 4.375 6.24167 4.375 5.83333C4.375 5.425 4.51597 5.07986 4.79792 4.79792C5.07986 4.51597 5.425 4.375 5.83333 4.375C6.24167 4.375 6.58681 4.51597 6.86875 4.79792C7.15069 5.07986 7.29167 5.425 7.29167 5.83333C7.29167 6.24167 7.15069 6.58681 6.86875 6.86875C6.58681 7.15069 6.24167 7.29167 5.83333 7.29167ZM1.16667 10.5C0.845833 10.5 0.571181 10.3858 0.342708 10.1573C0.114236 9.92882 0 9.65417 0 9.33333V2.33333C0 2.0125 0.114236 1.73785 0.342708 1.50937C0.571181 1.2809 0.845833 1.16667 1.16667 1.16667H3.00417L4.08333 0H7.58333L8.6625 1.16667H10.5C10.8208 1.16667 11.0955 1.2809 11.324 1.50937C11.5524 1.73785 11.6667 2.0125 11.6667 2.33333V9.33333C11.6667 9.65417 11.5524 9.92882 11.324 10.1573C11.0955 10.3858 10.8208 10.5 10.5 10.5H1.16667ZM1.16667 9.33333H10.5V2.33333H8.1375L7.07292 1.16667H4.59375L3.52917 2.33333H1.16667V9.33333Z" fill="currentColor"/></svg> BILD HOCHLADEN
+            <svg width="20" height="20" viewBox="0 0 12 11" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M5.83333 8.45833C6.5625 8.45833 7.18229 8.20312 7.69271 7.69271C8.20312 7.18229 8.45833 6.5625 8.45833 5.83333C8.45833 5.10417 8.20312 4.48438 7.69271 3.97396C7.18229 3.46354 6.5625 3.20833 5.83333 3.20833C5.10417 3.20833 4.48438 3.46354 3.97396 3.97396C3.46354 4.48438 3.20833 5.10417 3.20833 5.83333C3.20833 6.5625 3.46354 7.18229 3.97396 7.69271C4.48438 8.20312 5.10417 8.45833 5.83333 8.45833ZM5.83333 7.29167C5.425 7.29167 5.07986 7.15069 4.79792 6.86875C4.51597 6.58681 4.375 6.24167 4.375 5.83333C4.375 5.425 4.51597 5.07986 4.79792 4.79792C5.07986 4.51597 5.425 4.375 5.83333 4.375C6.24167 4.375 6.58681 4.51597 6.86875 4.79792C7.15069 5.07986 7.29167 5.425 7.29167 5.83333C7.29167 6.24167 7.15069 6.58681 6.86875 6.86875C6.58681 7.15069 6.24167 7.29167 5.83333 7.29167ZM1.16667 10.5C0.845833 10.5 0.571181 10.3858 0.342708 10.1573C0.114236 9.92882 0 9.65417 0 9.33333V2.33333C0 2.0125 0.114236 1.73785 0.342708 1.50937C0.571181 1.2809 0.845833 1.16667 1.16667 1.16667H3.00417L4.08333 0H7.58333L8.6625 1.16667H10.5C10.8208 1.16667 11.0955 1.2809 11.324 1.50937C11.5524 1.73785 11.6667 2.0125 11.6667 2.33333V9.33333C11.6667 9.65417 11.5524 9.92882 11.324 10.1573C11.0955 10.3858 10.8208 10.5 10.5 10.5H1.16667ZM1.16667 9.33333H10.5V2.33333H8.1375L7.07292 1.16667H4.59375L3.52917 2.33333H1.16667V9.33333Z" fill="currentColor"/></svg> BILD HOCHLADEN
         </button>
     </div>
 
@@ -380,7 +383,7 @@
         <div class="ingredient-input-row">
             <input type="text" id="newIngredientInput" class="ingredient-input" placeholder="Zutat (z.B. 500g Hackfleisch)" onkeypress="if(event.key==='Enter') addIngredientToEditor()">
             <button class="btn-add-main" onclick="addIngredientToEditor()">
-                <i data-lucide="plus" color="#000"></i>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M5 6.66667H0V5H5V0H6.66667V5H11.6667V6.66667H6.66667V11.6667H5V6.66667Z"/></svg>
             </button>
         </div>
 
@@ -410,6 +413,11 @@
     </div>
 </nav>
 
+<div class="undo-toast" id="undoToast">
+    <span class="undo-text">Element gelöscht</span>
+    <button class="undo-btn" onclick="performUndo()">RÜCKGÄNGIG</button>
+</div>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, updateDoc, query, where, orderBy, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -438,10 +446,15 @@
     let selectedTransferItems = []; 
     let selectedFavs = [];
 
+    // FÜR DIE UNDO-FUNKTION
+    let undoTimeout = null;
+    let pendingDeleteData = null;
+
     // --- DEINE EIGENEN SVGs FÜR JAVASCRIPT ---
     const svgStarFilled = `<svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.1875 15.8333L4.54167 9.97917L0 6.04167L6 5.52083L8.33333 0L10.6667 5.52083L16.6667 6.04167L12.125 9.97917L13.4792 15.8333L8.33333 12.7292L3.1875 15.8333Z" fill="currentColor"/></svg>`;
     const svgStarOutline = `<svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.70833 12.3542L8.33333 10.7708L10.9583 12.375L10.2708 9.375L12.5833 7.375L9.54167 7.10417L8.33333 4.27083L7.125 7.08333L4.08333 7.35417L6.39583 9.375L5.70833 12.3542ZM3.1875 15.8333L4.54167 9.97917L0 6.04167L6 5.52083L8.33333 0L10.6667 5.52083L16.6667 6.04167L12.125 9.97917L13.4792 15.8333L8.33333 12.7292L3.1875 15.8333Z" fill="currentColor"/></svg>`;
     const svgCamera = `<svg width="12" height="11" viewBox="0 0 12 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.83333 8.45833C6.5625 8.45833 7.18229 8.20312 7.69271 7.69271C8.20312 7.18229 8.45833 6.5625 8.45833 5.83333C8.45833 5.10417 8.20312 4.48438 7.69271 3.97396C7.18229 3.46354 6.5625 3.20833 5.83333 3.20833C5.10417 3.20833 4.48438 3.46354 3.97396 3.97396C3.46354 4.48438 3.20833 5.10417 3.20833 5.83333C3.20833 6.5625 3.46354 7.18229 3.97396 7.69271C4.48438 8.20312 5.10417 8.45833 5.83333 8.45833ZM5.83333 7.29167C5.425 7.29167 5.07986 7.15069 4.79792 6.86875C4.51597 6.58681 4.375 6.24167 4.375 5.83333C4.375 5.425 4.51597 5.07986 4.79792 4.79792C5.07986 4.51597 5.425 4.375 5.83333 4.375C6.24167 4.375 6.58681 4.51597 6.86875 4.79792C7.15069 5.07986 7.29167 5.425 7.29167 5.83333C7.29167 6.24167 7.15069 6.58681 6.86875 6.86875C6.58681 7.15069 6.24167 7.29167 5.83333 7.29167ZM1.16667 10.5C0.845833 10.5 0.571181 10.3858 0.342708 10.1573C0.114236 9.92882 0 9.65417 0 9.33333V2.33333C0 2.0125 0.114236 1.73785 0.342708 1.50937C0.571181 1.2809 0.845833 1.16667 1.16667 1.16667H3.00417L4.08333 0H7.58333L8.6625 1.16667H10.5C10.8208 1.16667 11.0955 1.2809 11.324 1.50937C11.5524 1.73785 11.6667 2.0125 11.6667 2.33333V9.33333C11.6667 9.65417 11.5524 9.92882 11.324 10.1573C11.0955 10.3858 10.8208 10.5 10.5 10.5H1.16667ZM1.16667 9.33333H10.5V2.33333H8.1375L7.07292 1.16667H4.59375L3.52917 2.33333H1.16667V9.33333Z" fill="currentColor"/></svg>`;
+    const svgX = `<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M1.4 14L0 12.6L5.6 7L0 1.4L1.4 0L7 5.6L12.6 0L14 1.4L8.4 7L14 12.6L12.6 14L7 8.4L1.4 14Z"/></svg>`;
 
     lucide.createIcons();
 
@@ -490,7 +503,8 @@
         const q = query(collection(db, "recipes"), orderBy("createdAt", "desc"));
         onSnapshot(q, (snapshot) => {
             recipes = [];
-            snapshot.forEach((doc) => recipes.push({ id: doc.id, ...doc.data() }));
+            // FIX: doc.id muss am Ende stehen, damit es eine alte ID überschreibt
+            snapshot.forEach((doc) => recipes.push({ ...doc.data(), id: doc.id }));
             renderRecipesList();
         });
     }
@@ -614,7 +628,7 @@
         document.getElementById('recipeTitleInput').value = '';
         document.getElementById('editImageArea').style.backgroundImage = `url('${editingRecipe.imageUrl}')`;
         document.getElementById('btnUploadImage').innerHTML = `${svgCamera} BILD HOCHLADEN`;
-        document.getElementById('btnDeleteRecipe').style.display = 'none'; // Verstecken beim Neu erstellen
+        document.getElementById('btnDeleteRecipe').style.display = 'none'; 
         renderEditorIngredients();
 
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
@@ -622,15 +636,14 @@
         lucide.createIcons();
     }
 
-    // Neu: Bestehendes Rezept bearbeiten
     window.editCurrentRecipe = function() {
-        editingRecipe = { ...currentViewingRecipe }; // Daten kopieren
+        editingRecipe = { ...currentViewingRecipe }; 
         if(!editingRecipe.ingredients) editingRecipe.ingredients = [];
         
         document.getElementById('recipeTitleInput').value = editingRecipe.title;
         document.getElementById('editImageArea').style.backgroundImage = `url('${editingRecipe.imageUrl}')`;
         document.getElementById('btnUploadImage').innerHTML = `${svgCamera} BILD ÄNDERN`;
-        document.getElementById('btnDeleteRecipe').style.display = 'flex'; // Einblenden beim Bearbeiten
+        document.getElementById('btnDeleteRecipe').style.display = 'flex'; 
         renderEditorIngredients();
 
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
@@ -685,7 +698,7 @@
             row.className = 'item-row';
             row.innerHTML = `
                 <span class="name-text">${ing}</span>
-                <button class="btn-delete" onclick="removeIngredientFromEditor(${index})"><i data-lucide="x" size="20"></i></button>
+                <button class="btn-delete" onclick="removeIngredientFromEditor(${index})">${svgX}</button>
             `;
             container.appendChild(row);
         });
@@ -698,12 +711,10 @@
         editingRecipe.title = title;
         
         if (editingRecipe.id) {
-            // Rezept Updaten
             await updateDoc(doc(db, "recipes", editingRecipe.id), {
                 title: editingRecipe.title, imageUrl: editingRecipe.imageUrl, ingredients: editingRecipe.ingredients
             });
         } else {
-            // Neues Rezept erstellen
             await addDoc(collection(db, "recipes"), {
                 title: editingRecipe.title, imageUrl: editingRecipe.imageUrl, ingredients: editingRecipe.ingredients, createdAt: serverTimestamp()
             });
@@ -742,7 +753,8 @@
         const q = query(collection(db, "shopping_items"), where("listName", "==", currentList), orderBy("sortOrder", "asc"));
         onSnapshot(q, (snapshot) => {
             localItems = [];
-            snapshot.forEach((doc) => localItems.push({ id: doc.id, ...doc.data() }));
+            // FIX: doc.id MUSS ans Ende, um versehentlich im Dokument gespeicherte alte IDs zu überschreiben (Zombies reparieren)
+            snapshot.forEach((doc) => localItems.push({ ...doc.data(), id: doc.id }));
             renderList(localItems);
         });
     }
@@ -762,24 +774,70 @@
             const row = document.createElement('div');
             row.className = 'item-row';
             const starIcon = item.fav ? svgStarFilled : svgStarOutline;
+            
+            // FIX: Mengen-Eingabefeld wieder integriert!
+            const qtyHtml = item.qty ? `<span class="qty-display">${item.qty}</span>` : `<span class="qty-display"></span>`;
+            
+            // FIX: item.name im onclick entfernt, damit Sonderzeichen (Anführungszeichen) den HTML Button nicht zerstören!
             row.innerHTML = `
-                <button class="btn-star ${item.fav ? 'is-fav' : ''}" onclick="toggleFavCloud('${item.id}', ${item.fav}, '${item.name}')">${starIcon}</button>
+                <button class="btn-star ${item.fav ? 'is-fav' : ''}" onclick="toggleFavCloud('${item.id}', ${item.fav})">${starIcon}</button>
+                ${qtyHtml}
                 <div class="name-text">${item.name}</div>
-                <button class="btn-delete" onclick="requestDelete('${item.id}')"><i data-lucide="x" size="20"></i></button>
+                <input type="text" class="qty-input" placeholder="-" value="${item.qty || ''}" onchange="updateItemQty('${item.id}', this.value)">
+                <button class="btn-delete" onclick="requestDelete('${item.id}')">${svgX}</button>
             `;
             listContainer.appendChild(row);
         });
         lucide.createIcons(); 
     }
 
-    window.toggleFavCloud = async function(id, currentStatus, name) {
+    // FIX: Neue Funktion für die Mengen-Änderung (wurde vorher versehentlich gelöscht)
+    window.updateItemQty = async function(id, newQty) {
+        await updateDoc(doc(db, "shopping_items", id), { qty: newQty });
+    }
+
+    // FIX: Name wird hier in der Funktion erst geholt, damit Sonderzeichen das HTML nicht kaputt machen
+    window.toggleFavCloud = async function(id, currentStatus) {
+        const item = localItems.find(i => i.id === id);
+        if(!item) return;
+        
         await updateDoc(doc(db, "shopping_items", id), { fav: !currentStatus });
-        if (!currentStatus && !favorites.includes(name)) {
-            await addDoc(collection(db, "favorites"), { name: name });
+        if (!currentStatus && !favorites.includes(item.name)) {
+            await addDoc(collection(db, "favorites"), { name: item.name });
         }
     }
 
-    window.requestDelete = async function(id) { await deleteDoc(doc(db, "shopping_items", id)); }
+    window.requestDelete = async function(id) {
+        const itemToDelete = localItems.find(i => i.id === id);
+        if(!itemToDelete) return;
+        await deleteDoc(doc(db, "shopping_items", id));
+        
+        pendingDeleteData = { ...itemToDelete };
+        
+        const toast = document.getElementById('undoToast');
+        toast.classList.add('show');
+        
+        clearTimeout(undoTimeout);
+        undoTimeout = setTimeout(() => { 
+            toast.classList.remove('show'); 
+            pendingDeleteData = null; 
+        }, 5000);
+    }
+
+    // FIX: Zombie-Artikel Fehler behoben (Löscht die ID aus dem Speicher, bevor das Element wieder angelegt wird)
+    window.performUndo = async function() {
+        if(!pendingDeleteData) return;
+        document.getElementById('undoToast').classList.remove('show');
+        clearTimeout(undoTimeout);
+        
+        const dataToRestore = { ...pendingDeleteData };
+        delete dataToRestore.id; // <-- Verhindert das Entstehen von Zombie-Artikeln!
+        dataToRestore.createdAt = serverTimestamp(); 
+        
+        await addDoc(collection(db, "shopping_items"), dataToRestore);
+        pendingDeleteData = null;
+    }
+
     window.addItem = async function() {
         const input = document.getElementById('newItemName');
         if(input.value.trim()) {
